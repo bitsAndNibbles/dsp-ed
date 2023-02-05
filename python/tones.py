@@ -1,3 +1,5 @@
+#!/bin/env python3
+
 # JLS 20230108
 
 import numpy as np
