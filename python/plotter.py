@@ -1,24 +1,35 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import numpy.fft as fft
+from enum import Enum, auto
 from math import ceil
 
+class PlotType(Enum):
+    PSD = auto(),
+    SPECTROGRAM = auto()
 
-class _Plot(object):
+class PlotRequest(object):
     
     _next = 0
 
-    def __init__(self, x, y, title=None, plot_num=None):
-        self.x = x
-        self.y = y
+    def __init__(self,
+        plot_type: PlotType,
+        samples,
+        samp_rate,
+        title=None,
+        plot_num=None):
+
+        self.plot_type = plot_type
+        self.samples = samples
+        self.samp_rate = samp_rate
         self.title = title
 
         if plot_num==None:
-            self.plot_num = _Plot._next
-            _Plot._next += 1
+            self.plot_num = PlotRequest._next
+            PlotRequest._next += 1
         else:
             self.plot_num = plot_num
-            _Plot._next = max(_Plot._next + 1, plot_num+1)
+            PlotRequest._next = max(PlotRequest._next + 1, plot_num+1)
 
 
 class Plotter(object):
@@ -35,23 +46,44 @@ class Plotter(object):
             'Lucida Sans Unicode',
             'sans-serif']
     
-    def plot_psd(self, samples, samp_rate, title=None, plot_num=None):
-        num_samples = len(samples)
+    def add_plot(self,
+        type : PlotType,
+        samples,
+        samp_rate,
+        title=None,
+        plot_num=None):
 
-        # power spectral data -- convert samples from time to freq domain
-        psd = np.abs(fft.fft(samples))**2/(num_samples*samp_rate)
-        psd_log = 10.0 * np.log10(psd)
-        psd_shifted = fft.fftshift(psd_log)
-        # psd_shifted will be our y-axis
+        self._pending_plots.append(PlotRequest(
+            type,
+            samples,
+            samp_rate,
+            title=title,
+            plot_num=plot_num))
 
-        # frequency is our x-axis
-        f = np.arange(
-            samp_rate/-2.0,
-            samp_rate/2.0,
-            samp_rate/num_samples)
+    def _plot_psd_render(self, ax : plt.Axes, req : PlotRequest):
+        simplified = False
 
-        self._pending_plots.append(
-            _Plot(f, psd_shifted, title, plot_num))
+        if simplified:
+            ax.psd(req.samples, Fs=req.samp_rate)
+        else:
+            num_samples = len(req.samples)
+
+            # power spectral data -- convert samples from time to freq domain
+            psd = np.abs(fft.fft(req.samples))**2/(num_samples*req.samp_rate)
+            psd_log = 10.0 * np.log10(psd)
+            psd_shifted = fft.fftshift(psd_log)
+            # psd_shifted will be our y-axis
+
+            # frequency is our x-axis
+            f = np.arange(
+                req.samp_rate/-2.0,
+                req.samp_rate/2.0,
+                req.samp_rate/num_samples)
+            
+            ax.plot(f, psd_shifted)
+
+    def _plot_spectrogram_render(self, ax : plt.Axes, req : PlotRequest):
+        ax.specgram(req.samples, Fs=req.samp_rate)
 
     def show(self):
         '''
@@ -68,20 +100,26 @@ class Plotter(object):
             gs = fig.add_gridspec(1, 1)
 
         while self._pending_plots:
-            plot_data = self._pending_plots.pop(0)
+            req = self._pending_plots.pop(0)
 
-            row = int(plot_data.plot_num/2)
-            col = plot_data.plot_num % 2
+            row = int(req.plot_num/2)
+            col = req.plot_num % 2
 
             # let the last plot take the remainder of its row
-            if plot_data.plot_num == num_plots-1:
+            if req.plot_num == num_plots-1:
                 subplot_spec = gs[row, col:]
             else:
                 subplot_spec = gs[row, col]
 
             ax = fig.add_subplot(subplot_spec)
-            ax.set_title(plot_data.title)
+            ax.set_title(req.title)
             ax.grid()
-            ax.plot(plot_data.x, plot_data.y)
+
+            if req.plot_type is PlotType.PSD:
+                self._plot_psd_render(ax, req)
+            elif req.plot_type is PlotType.SPECTROGRAM:
+                self._plot_spectrogram_render(ax, req)
+            else:
+                raise Exception(f"Unsupported plot type {req.plot_type}")
 
         plt.show()

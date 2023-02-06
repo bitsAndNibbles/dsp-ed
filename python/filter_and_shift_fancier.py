@@ -5,7 +5,7 @@
 import numpy as np
 from numpy.random import randn
 from scipy import signal
-from plotter import Plotter
+from plotter import PlotType, Plotter
 
 # choose a power of 2 for the FFT to perform efficiently/correctly
 num_samples = 2**13
@@ -51,16 +51,17 @@ if __name__ == '__main__':
 
     # make some noise 🎉
     samples += noise(2)
-    p.plot_psd(samples, Fs, "make some noise")
+    p.add_plot(PlotType.PSD, samples, Fs, "make some noise")
 
     # make waves 🏄‍♂️
     for freq in [ 900, -1250, 150 ]:
         samples += tone(freq)
-    p.plot_psd(samples, Fs, "make waves")
+    p.add_plot(PlotType.PSD, samples, Fs, "make waves")
 
     # tune out the nonsense and really, truly focus on one tone -- achieve inner ☮
     samples = band_pass(samples, 880, 920)
-    p.plot_psd(samples, Fs, "finished RF!")
+    p.add_plot(PlotType.PSD, samples, Fs, "finished RF!")
+    p.add_plot(PlotType.SPECTROGRAM, samples, Fs, "oooh pretty")
 
     # SHOW your work 📈
     p.show()
