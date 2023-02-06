@@ -55,7 +55,7 @@ class Plotter(object):
 
         self._pending_plots.append(PlotRequest(
             type,
-            samples,
+            np.ndarray.copy(samples),
             samp_rate,
             title=title,
             plot_num=plot_num))
