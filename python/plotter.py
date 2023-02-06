@@ -37,7 +37,8 @@ class Plotter(object):
     Wraps matplotlib to make it a bit easier to get our stuff plotted
     '''
 
-    def __init__(self):
+    def __init__(self, cols=2):
+        self._cols = cols
         self._pending_plots = []
 
         plt.rcParams['font.family'] = [
@@ -92,18 +93,19 @@ class Plotter(object):
 
         fig = plt.figure("DSP Ed", tight_layout=True)
 
-        # create a 2-column gridspec that will layout our multiple plots
+        # create a multi-column gridspec with as many cells as needed to
+        # layout all of the requested plots
         num_plots = max([pp.plot_num for pp in self._pending_plots]) + 1
         if num_plots > 1:
-            gs = fig.add_gridspec(int(ceil(num_plots/2)), 2)
+            gs = fig.add_gridspec(int(ceil(num_plots/self._cols)), self._cols)
         else:
             gs = fig.add_gridspec(1, 1)
 
         while self._pending_plots:
             req = self._pending_plots.pop(0)
 
-            row = int(req.plot_num/2)
-            col = req.plot_num % 2
+            row = int(req.plot_num / self._cols)
+            col = req.plot_num % self._cols
 
             # let the last plot take the remainder of its row
             if req.plot_num == num_plots-1:
