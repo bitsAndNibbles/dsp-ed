@@ -60,33 +60,26 @@ def bandstop_via_highpass(samples, band, Fs) -> np.ndarray:
     return output
 
 
-def bandpass_via_bandpass(samples, band, Fs) -> np.ndarray:
+def bandpass_via_filter_shift(samples, band, Fs) -> np.ndarray:
     '''
-    performs a bandpass filter using a range of cutoff freqs
+    Creates a filter, rotates the filter by the center freq of the
+    bandpass, and then convolves the samples with this complex filter.
+    (After shifting the filter, it is a complex filter. Convolution
+    will be more processor intensive than the low-pass filter approach.)
     '''
 
-    # scipy doesn't permit filters to be created with negative bandpasses.
-    # so if band contains negative values, then we must shift the frequencies
-    # such that the filtered area is positive and then shift back after
-    # convolution.
+    center_hz = (band[0] + band[1]) / 2
+    bandwidth_hz = band[1] - band[0]
+    cutoff = (bandwidth_hz/2) * 1.1
 
-    shift = 0
-    output = samples
+    taps = signal.firwin(numtaps=39, cutoff=cutoff, fs=Fs)
 
-    if band[0] < 0:
-        shift = Fs/2
+    # technique adapted from
+    # https://github.com/gnuradio/gnuradio/blob/main/gr-filter/python/filter/freq_xlating_fft_filter.py
+    phase_inc = (2.0 * np.pi * center_hz) / Fs
+    rtaps = [x * np.exp(i * phase_inc * 1j) for i, x in enumerate(taps)]
 
-    if shift: output = samples * tone(-shift)
-
-    bandpass_filter = signal.firwin(
-        numtaps=191,
-        cutoff=[band[0]+shift, band[1]+shift],
-        fs=Fs,
-        pass_zero=False)
-    
-    output = np.convolve(output, bandpass_filter, mode='same')
-
-    if shift: output *= tone(shift)
+    output = np.convolve(samples, rtaps, mode='same')
 
     return output
 
@@ -122,10 +115,10 @@ if __name__ == '__main__':
     bandstop_via_hp = bandstop_via_highpass(samples, band, Fs)
     p.add_plot(PlotType.PSD, bandstop_via_hp, Fs, "bandstop via tuning/highpass")
 
-    bandpass_direct = bandpass_via_bandpass(samples, band, Fs)
-    p.add_plot(PlotType.PSD, bandpass_direct, Fs, "bandpass w/ conditional tuning")
+    bp_via_filter_shift = bandpass_via_filter_shift(samples, band, Fs)
+    p.add_plot(PlotType.PSD, bp_via_filter_shift, Fs, "bandpass via complex filter convolution")
 
-    p.add_plot(PlotType.SPECTROGRAM, bandpass_via_lp, Fs, "oooh pretty")
+    p.add_plot(PlotType.SPECTROGRAM, bp_via_filter_shift, Fs, "oooh pretty")
 
     # SHOW your work 📈
     p.show()
