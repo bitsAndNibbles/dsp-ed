@@ -21,6 +21,13 @@ def bandpass_via_lowpass(samples, band, Fs) -> np.ndarray:
     return output
 
 
+def lowpass_via_remez(samples, bw, Fs, numtaps) -> np.ndarray:
+    lpf = signal.remez(numtaps, [0, bw, bw+(Fs/2-bw)/4, Fs/2], [1, 0], Hz=Fs)
+    output = signal.lfilter(lpf, 1.0, samples)
+
+    return output
+
+
 def bandstop_via_highpass(samples, band, Fs) -> np.ndarray:
     '''
     performs a bandstop filter by combining tuning with a highpass filter
