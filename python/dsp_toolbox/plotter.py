@@ -16,12 +16,14 @@ class PlotRequest(object):
         plot_type: PlotType,
         samples,
         samp_rate,
+        NFFT=2048,
         title=None,
         plot_num=None):
 
         self.plot_type = plot_type
         self.samples = samples
         self.samp_rate = samp_rate
+        self.NFFT = NFFT
         self.title = title
 
         if plot_num==None:
@@ -52,12 +54,14 @@ class Plotter(object):
         samples,
         samp_rate,
         title=None,
+        NFFT=2048,
         plot_num=None):
 
         self._pending_plots.append(PlotRequest(
             type,
             np.ndarray.copy(samples),
             samp_rate,
+            NFFT=NFFT,
             title=title,
             plot_num=plot_num))
 
@@ -65,7 +69,7 @@ class Plotter(object):
         simplified = False
 
         if simplified:
-            ax.psd(req.samples, Fs=req.samp_rate)
+            ax.psd(req.samples, Fs=req.samp_rate, NFFT=req.NFFT)
         else:
             num_samples = len(req.samples)
 
@@ -84,7 +88,7 @@ class Plotter(object):
             ax.plot(f, psd_shifted)
 
     def _plot_spectrogram_render(self, ax : plt.Axes, req : PlotRequest):
-        ax.specgram(req.samples, Fs=req.samp_rate)
+        ax.specgram(req.samples, Fs=req.samp_rate, NFFT=req.NFFT)
 
     def show(self):
         '''
