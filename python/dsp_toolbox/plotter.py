@@ -66,26 +66,7 @@ class Plotter(object):
             plot_num=plot_num))
 
     def _plot_psd_render(self, ax : plt.Axes, req : PlotRequest):
-        simplified = False
-
-        if simplified:
-            ax.psd(req.samples, Fs=req.samp_rate, NFFT=req.NFFT)
-        else:
-            num_samples = len(req.samples)
-
-            # power spectral data -- convert samples from time to freq domain
-            psd = np.abs(fft.fft(req.samples))**2/(num_samples*req.samp_rate)
-            psd_log = 10.0 * np.log10(psd)
-            psd_shifted = fft.fftshift(psd_log)
-            # psd_shifted will be our y-axis
-
-            # frequency is our x-axis
-            f = np.arange(
-                req.samp_rate/-2.0,
-                req.samp_rate/2.0,
-                req.samp_rate/num_samples)
-            
-            ax.plot(f, psd_shifted)
+        ax.psd(req.samples, Fs=req.samp_rate, NFFT=req.NFFT)
 
     def _plot_spectrogram_render(self, ax : plt.Axes, req : PlotRequest):
         ax.specgram(req.samples, Fs=req.samp_rate, NFFT=req.NFFT)
@@ -128,4 +109,6 @@ class Plotter(object):
             else:
                 raise Exception(f"Unsupported plot type {req.plot_type}")
 
+        PlotRequest._next = 0
+        
         plt.show()
