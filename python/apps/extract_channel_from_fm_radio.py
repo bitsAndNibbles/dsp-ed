@@ -33,42 +33,34 @@ dat = dat[0::2] + (1j * dat[1::2])
 file_Fs = int(1.2e6) # frequencies covered per sample, aka sample rate
 num_samples = len(dat)
 p.add_plot(PlotType.SPECTROGRAM, dat, file_Fs, "input file")
+p.add_plot(PlotType.PSD, dat, file_Fs, "input file")
 
 # tune to interesting channel that I observe by sight on the above plot, which
 # is 250 kHz to the right of the original data file's center freq
 tune_freq = 250e3
 tuned_dat = y = dat * siggen.tone(-tune_freq, file_Fs, num_samples)
 p.add_plot(PlotType.SPECTROGRAM, tuned_dat, file_Fs, title="tuned")
+p.add_plot(PlotType.PSD, tuned_dat, file_Fs, title="tuned")
+
+p.show()
 
 # filter out unwanted signals
-channel_bw = 45e3  # as observed in plot
+channel_bw = 100e3  # as observed in plot
 filtered_dat = filter.lowpass_via_remez(tuned_dat, channel_bw, file_Fs, 49)
 p.add_plot(PlotType.SPECTROGRAM, filtered_dat, file_Fs, title="filtered")
+p.add_plot(PlotType.PSD, filtered_dat, file_Fs, title="filtered")
 
 # downsample
-decimation = int(math.ceil(file_Fs / channel_bw))
+decimation = int(math.floor(file_Fs / channel_bw))
 channel_Fs = file_Fs / decimation
 decimated_dat = signal.decimate(filtered_dat, decimation)
 p.add_plot(PlotType.SPECTROGRAM, decimated_dat, channel_Fs, title="decimated")
+p.add_plot(PlotType.PSD, decimated_dat, channel_Fs, title="decimated")
 
 # write narrowband to file
 channel_iq_file_path = \
-    join(dirname(__file__), "../../data/FM_CF98.7M_SR45K_cplx_i8.dat")
+    join(dirname(__file__), "../../data/FM_CF98.7M_SR100K_cplx_i8.dat")
 np.ndarray.tofile(decimated_dat, channel_iq_file_path)
 
 # show plots we've recently added
 p.show()
-
-
-# TODO:
-
-# run frequency discriminator to get FM (demod)
-
-# run FM deemphasis at 75 us
-
-# downsample to 48 kHz for audio hardware
-
-# write to file (and play in Audacity or similar)
-
-# show plots we've recently added
-# p.show()
