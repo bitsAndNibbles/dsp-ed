@@ -6,7 +6,8 @@ from math import ceil
 
 class PlotType(Enum):
     PSD = auto(),
-    SPECTROGRAM = auto()
+    SPECTROGRAM = auto(),
+    TIME = auto()
 
 class PlotRequest(object):
     
@@ -71,6 +72,10 @@ class Plotter(object):
     def _plot_spectrogram_render(self, ax : plt.Axes, req : PlotRequest):
         ax.specgram(req.samples, Fs=req.samp_rate, NFFT=req.NFFT)
 
+    def _plot_time_render(self, ax : plt.Axes, req : PlotRequest):
+        x = np.arange(0, req.samp_rate/len(req.samples),req.samp_rate)
+        ax.plot(req.samples, x)
+
     def show(self):
         '''
         Display all pending plots in a grid and clear the pending plots list.
@@ -106,9 +111,11 @@ class Plotter(object):
                 self._plot_psd_render(ax, req)
             elif req.plot_type is PlotType.SPECTROGRAM:
                 self._plot_spectrogram_render(ax, req)
+            elif req.plot_type is PlotType.TIME:
+                self._plot_time_render(ax, req)
             else:
                 raise Exception(f"Unsupported plot type {req.plot_type}")
 
         PlotRequest._next = 0
-        
+
         plt.show()
