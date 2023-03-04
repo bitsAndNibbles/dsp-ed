@@ -47,7 +47,7 @@ p.add_plot(PlotType.PSD, tuned_dat, file_Fs, title="tuned")
 p.show()
 
 # filter out unwanted signals
-channel_bw = 100e3  # as observed in plot
+channel_bw = 200e3  # as observed in plot
 filtered_dat = filter.lowpass_via_remez(tuned_dat, channel_bw, file_Fs, 49)
 p.add_plot(PlotType.SPECTROGRAM, filtered_dat, file_Fs, title="filtered")
 p.add_plot(PlotType.PSD, filtered_dat, file_Fs, title="filtered")
@@ -61,7 +61,7 @@ p.add_plot(PlotType.PSD, decimated_dat, channel_Fs, title="decimated")
 
 # write narrowband to file
 channel_iq_file_path = \
-    join(dirname(__file__), "../../data/FM_CF98.7M_SR100K_cplx_f64.dat")
+    join(dirname(__file__), "../../data/FM_CF98.7M_SR200K_cplx_f64.dat")
 np.ndarray.tofile(decimated_dat, channel_iq_file_path)
 
 # show plots we've recently added
