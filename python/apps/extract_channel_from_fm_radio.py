@@ -39,6 +39,8 @@ p.add_plot(PlotType.PSD, dat, file_Fs, "input file")
 # is 250 kHz to the right of the original data file's center freq
 tune_freq = 250e3
 tuned_dat = y = dat * siggen.tone(-tune_freq, file_Fs, num_samples)
+# note: our signal is now complex-float since siggen.tone returns a
+# floating point array
 p.add_plot(PlotType.SPECTROGRAM, tuned_dat, file_Fs, title="tuned")
 p.add_plot(PlotType.PSD, tuned_dat, file_Fs, title="tuned")
 
@@ -59,7 +61,7 @@ p.add_plot(PlotType.PSD, decimated_dat, channel_Fs, title="decimated")
 
 # write narrowband to file
 channel_iq_file_path = \
-    join(dirname(__file__), "../../data/FM_CF98.7M_SR100K_cplx_i8.dat")
+    join(dirname(__file__), "../../data/FM_CF98.7M_SR100K_cplx_f64.dat")
 np.ndarray.tofile(decimated_dat, channel_iq_file_path)
 
 # show plots we've recently added
