@@ -94,15 +94,24 @@ blocks:
     rotation: 0
     state: enabled
 - name: lo_quality_adjustment
-  id: variable
+  id: variable_qtgui_range
   parameters:
     comment: ''
-    value: '300'
+    gui_hint: '[0,0,1,1]'
+    label: ''
+    min_len: '200'
+    orient: QtCore.Qt.Horizontal
+    rangeType: int
+    start: '-300'
+    step: '1'
+    stop: '300'
+    value: '0'
+    widget: counter_slider
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [72, 940.0]
+    coordinate: [64, 944.0]
     rotation: 0
     state: enabled
 - name: max_messages
@@ -114,7 +123,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [552, 1924.0]
+    coordinate: [368, 1968.0]
     rotation: 0
     state: enabled
 - name: num_src_bits
@@ -200,7 +209,7 @@ blocks:
     alias: ''
     amp: '1'
     comment: ''
-    freq: rx_shift
+    freq: rx_shift+lo_quality_adjustment
     maxoutbuf: '0'
     minoutbuf: '0'
     offset: '0'
@@ -231,7 +240,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [728, 1868.0]
+    coordinate: [552, 2048.0]
     rotation: 0
     state: enabled
 - name: blocks_char_to_float_0
@@ -266,7 +275,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [888, 1852.0]
+    coordinate: [712, 2032.0]
     rotation: 0
     state: enabled
 - name: blocks_file_source_0
@@ -306,7 +315,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [552, 1868.0]
+    coordinate: [376, 2048.0]
     rotation: 0
     state: enabled
 - name: blocks_keep_one_in_n_0
@@ -1017,7 +1026,7 @@ blocks:
     dc_offset_mode7: '0'
     dc_offset_mode8: '0'
     dc_offset_mode9: '0'
-    freq0: rx_freq-lo_quality_adjustment
+    freq0: rx_freq
     freq1: 100e6
     freq10: 100e6
     freq11: 100e6
@@ -1311,6 +1320,51 @@ blocks:
     coordinate: [64, 1636.0]
     rotation: 0
     state: true
+- name: zeromq_pub_sink_0
+  id: zeromq_pub_sink
+  parameters:
+    address: tcp://127.0.0.1:4938
+    affinity: ''
+    alias: ''
+    bind: 'True'
+    comment: ''
+    drop_on_hwm: 'True'
+    hwm: '-1'
+    key: ''
+    pass_tags: 'False'
+    timeout: '100'
+    type: byte
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [560, 1832.0]
+    rotation: 0
+    state: enabled
+- name: zeromq_sub_source_0
+  id: zeromq_sub_source
+  parameters:
+    address: tcp://127.0.0.1:4938
+    affinity: ''
+    alias: ''
+    bind: 'False'
+    comment: ''
+    hwm: '-1'
+    key: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    pass_tags: 'False'
+    timeout: '100'
+    type: byte
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [80, 2016.0]
+    rotation: 0
+    state: enabled
 
 connections:
 - [analog_quadrature_demod_cf_0, '0', digital_binary_slicer_fb_0_0, '0']
@@ -1320,7 +1374,7 @@ connections:
 - [blocks_file_source_0, '0', blocks_skiphead_0, '0']
 - [blocks_file_source_0, '0', blocks_throttle2_0, '0']
 - [blocks_head_0, '0', blocks_add_const_vxx_0, '0']
-- [blocks_keep_one_in_n_0, '0', blocks_head_0, '0']
+- [blocks_keep_one_in_n_0, '0', zeromq_pub_sink_0, '0']
 - [blocks_multiply_xx_0, '0', rational_resampler_xxx_0, '0']
 - [blocks_skiphead_0, '0', virtual_sink_1, '0']
 - [digital_binary_slicer_fb_0_0, '0', virtual_sink_2, '0']
@@ -1335,6 +1389,7 @@ connections:
 - [virtual_source_3, '0', blocks_char_to_float_0, '0']
 - [virtual_source_3, '0', blocks_keep_one_in_n_0, '0']
 - [virtual_source_3, '0', qtgui_time_raster_sink_x_0, '0']
+- [zeromq_sub_source_0, '0', blocks_head_0, '0']
 
 metadata:
   file_format: 1
