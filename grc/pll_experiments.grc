@@ -42,7 +42,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [384, 20.0]
+    coordinate: [496, 16.0]
     rotation: 0
     state: enabled
 - name: max_freq
@@ -54,7 +54,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [608, 20.0]
+    coordinate: [808, 16.0]
     rotation: 0
     state: enabled
 - name: max_pps
@@ -66,7 +66,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [624, 92.0]
+    coordinate: [808, 104.0]
     rotation: 0
     state: enabled
 - name: min_freq
@@ -78,7 +78,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [512, 20.0]
+    coordinate: [656, 16.0]
     rotation: 0
     state: enabled
 - name: min_pps
@@ -90,7 +90,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [504, 92.0]
+    coordinate: [656, 104.0]
     rotation: 0
     state: enabled
 - name: samp_rate
@@ -102,7 +102,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [184, 12]
+    coordinate: [248, 8.0]
     rotation: 0
     state: enabled
 - name: sig_freq_in
@@ -123,7 +123,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [40, 436.0]
+    coordinate: [24, 520.0]
     rotation: 0
     state: enabled
 - name: analog_pll_carriertracking_cc_0
@@ -141,7 +141,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [664, 420.0]
+    coordinate: [576, 532.0]
     rotation: 0
     state: enabled
 - name: analog_pll_freqdet_cf_0
@@ -159,7 +159,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [664, 196.0]
+    coordinate: [576, 236.0]
     rotation: 0
     state: enabled
 - name: analog_pll_refout_cc_0
@@ -177,7 +177,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [656, 308.0]
+    coordinate: [576, 372.0]
     rotation: 0
     state: enabled
 - name: analog_sig_source_x_0
@@ -200,7 +200,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [40, 276.0]
+    coordinate: [24, 320.0]
     rotation: 0
     state: enabled
 - name: blocks_copy_0
@@ -219,7 +219,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [400, 324.0]
+    coordinate: [344, 380.0]
     rotation: 0
     state: enabled
 - name: blocks_multiply_const_vxx_0
@@ -237,7 +237,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [936, 212.0]
+    coordinate: [920, 260.0]
     rotation: 0
     state: enabled
 - name: blocks_multiply_const_vxx_0_0
@@ -255,7 +255,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1136, 212.0]
+    coordinate: [1168, 260.0]
     rotation: 0
     state: enabled
 - name: blocks_throttle2_0
@@ -276,7 +276,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [312, 196.0]
+    coordinate: [320, 232.0]
     rotation: 0
     state: enabled
 - name: import_0
@@ -289,7 +289,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [296, 20.0]
+    coordinate: [384, 12.0]
     rotation: 0
     state: enabled
 - name: qtgui_freq_sink_x_0
@@ -370,7 +370,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [920, 300.0]
+    coordinate: [920, 360.0]
     rotation: 0
     state: enabled
 - name: qtgui_freq_sink_x_1
@@ -451,7 +451,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [920, 412.0]
+    coordinate: [920, 520.0]
     rotation: 0
     state: enabled
 - name: qtgui_time_sink_x_0
@@ -541,14 +541,14 @@ blocks:
     width8: '1'
     width9: '1'
     ylabel: Amplitude
-    ymax: '1'
-    ymin: '-1'
+    ymax: max_freq*1.1
+    ymin: min_freq*1.1
     yunit: '""'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1328, 188.0]
+    coordinate: [1384, 224.0]
     rotation: 0
     state: enabled
 
@@ -566,4 +566,4 @@ connections:
 
 metadata:
   file_format: 1
-  grc_version: 3.10.9.2
+  grc_version: 3.10.8.0
