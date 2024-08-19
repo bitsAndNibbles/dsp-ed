@@ -182,10 +182,10 @@ blocks:
     alias: ''
     align_output: 'False'
     comment: ''
-    endianness: gr.GR_LSB_FIRST
+    endianness: gr.GR_MSB_FIRST
     k: '1'
     l: '8'
-    len_tag_key: '""'
+    len_tag_key: '"packet_len"'
     maxoutbuf: '0'
     minoutbuf: '0'
   states:
@@ -411,7 +411,7 @@ blocks:
     color9: '"dark green"'
     comment: ''
     grid: 'False'
-    gui_hint: ''
+    gui_hint: 0,2,1,2
     label1: ''
     label10: ''
     label2: ''
